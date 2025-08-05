@@ -1,16 +1,23 @@
-# task_tracker
+## Hey!
 
-A new Flutter project.
+This is my first app in Flutter, built for learning purposes.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+### Working:
 
-A few resources to get you started if this is your first Flutter project:
+- Single screen layout
+- Add a new task by title
+- Tap **Save** to store the task to the list *(currently not stored permanently)*
+- Tasks are listed below the Save button
+- Each task shows **date and time**
+- Tasks are **sorted oldest first**
+- Each task can be **deleted**
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Thanks!
+
+Thanks for checking it out!  
+I'm still learning Flutter, and this app is part of that journey.  
+More features and improvements coming soon!
