@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:task_tracker/models/task.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:task_tracker/models/task_model.dart';
 import 'package:task_tracker/widgets/task_tile.dart';
 import 'package:task_tracker/widgets/toast.dart';
 
@@ -14,14 +16,14 @@ class TaskScreen extends StatefulWidget{
 
 // STATE CLASS
 class _TaskScreenState extends State<TaskScreen>{
+  // hive box
+  final _box = Hive.box<TaskModel>('tasksBox');
+
   final TextEditingController _controller = TextEditingController();
-  final List<TaskModel> _tasks = [];
 
   void _onDelete(int index){
-    setState(() {
-      _tasks.removeAt(index);
-      showToast(context, "Task Deleted");
-    });
+    _box.deleteAt(index);
+    showToast(context, "Task Deleted");
   }
 
   // build function
@@ -69,18 +71,12 @@ class _TaskScreenState extends State<TaskScreen>{
                 if (text.isNotEmpty) {
                   task = TaskModel(title: text, createdAt: DateTime.now());
 
-                  setState(() {
-                    _controller.clear();
-
-                    // add the task to list
-                    _tasks.add(task);
-
-                    // close keyboard
-                    FocusScope.of(context).unfocus();
-
-                    // show toast of success
-                    showToast(context, "Task Added");
-                  });
+                  _box.add(task);
+                  _controller.clear();
+                  // close keyboard
+                  FocusScope.of(context).unfocus();
+                  // show toast of success
+                  showToast(context, "Task Added");
                 }},
               child: Text("Save Task"),
             ),
@@ -88,15 +84,25 @@ class _TaskScreenState extends State<TaskScreen>{
 
             // Task list
             Expanded(
-              child: ListView.builder(
-                itemCount: _tasks.length,
-                itemBuilder: (context, index) {
-                  final task = _tasks[index];
-                  return TaskTile(
-                    task: task,
-                    onDelete: () {
-                      _onDelete(index);
-                    },
+              child: ValueListenableBuilder(
+                valueListenable: _box.listenable(),
+                builder: (context, _box, _) {
+                  return ListView.builder(
+                    itemCount: _box.length,
+                    itemBuilder: (context, index) {
+                      final task = _box.getAt(index);
+
+                      if (task == null){
+                        return SizedBox.shrink();
+                      }
+
+                      return TaskTile(
+                        task: task,
+                        onDelete: (){
+                          _onDelete(index);
+                        },
+                      );
+                    }
                   );
                 }),
             )
